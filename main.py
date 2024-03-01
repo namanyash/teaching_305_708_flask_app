@@ -63,7 +63,7 @@ def process_quiz(quiz_text):
 def index():
     return "Welcome to the Flask API!"
 
-def prepareQuizFromLlama(student_topic, new_model_adapter):
+def fetchQuizFromLlama(student_topic, new_model_adapter):
     query = f"<s>[INST] <<SYS>>\n Generate a quiz 3 questions to test the ability of the students on the topic provided by them. Generate 4 options after each question where only one of the options is correct. Each question should start with QUES: and options should start with OPTIION: . The format of your response should strictly match this example {format_question} \n<</SYS>>\n\n Student topic {student_topic} [/INST]  </s>"
     response = new_model_adapter.complete(query=query, max_generated_token_count=500).generated_output
     return response
@@ -76,7 +76,7 @@ def get_quiz():
     student_topic = request.args.get('topic')
     if student_topic is None:
         return jsonify({'error': 'Missing topic parameter'}), 400
-    quiz = prepareQuizFromLlama(student_topic, new_model_adapter)
+    quiz = fetchQuizFromLlama(student_topic, new_model_adapter)
     return jsonify({'quiz': process_quiz(quiz)}), 200
 
 def prepareLlamaBot(name):
